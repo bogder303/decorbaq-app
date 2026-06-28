@@ -1,7 +1,7 @@
-const CACHE_NAME = 'decorbaq-v1';
+const CACHE_NAME = 'decorbaq-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
+  '/decorbaq-app/',
+  '/decorbaq-app/index.html',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap'
 ];
 
@@ -22,7 +22,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Pass through Google Sheets API calls (no cache)
   if (event.request.url.includes('script.google.com')) {
     return;
   }
