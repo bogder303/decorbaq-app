@@ -918,8 +918,13 @@
         };
         reader.readAsDataURL(file);
       });
+      // Nombrar cada foto con el No. de Entrega
+      const noEntrega = (formId === 'rotura' ? data.NoEntrega : data.Entrega) || 'SIN-ENTREGA';
+      let fotoIdx = 1;
       for (const file of Array.from(fotoInput.files)) {
         const f = await compressFile(file);
+        f.nombre = `${noEntrega}_${String(fotoIdx).padStart(2,'0')}.jpg`;
+        fotoIdx++;
         fotos.push(f);
       }
     }
