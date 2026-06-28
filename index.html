@@ -389,6 +389,77 @@
   }
   .ref-summary.visible { display: block; }
 
+  /* ─── OTRAS NOVEDADES BUTTON ─────────────── */
+  .otras-btn-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .btn-otras-novedades {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 18px;
+    background: #1A1714;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+  }
+  .btn-otras-novedades:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+  .btn-otras-novedades:active { transform: scale(0.98); }
+  .otras-icon { font-size: 20px; flex-shrink: 0; line-height: 1; }
+  .otras-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #fff;
+    display: flex; flex-direction: column; gap: 1px; text-align: left;
+  }
+  .otras-sub {
+    font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 400;
+    letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.65);
+  }
+  .otras-arrow { font-size: 12px; color: rgba(255,255,255,0.8); transition: transform 0.2s; }
+  .otras-arrow.open { transform: rotate(180deg); }
+
+  /* ─── SUBMENU DROPDOWN ───────────────────── */
+  .submenu-dropdown {
+    display: none;
+    position: fixed;
+    min-width: 280px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    z-index: 9999;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+  .submenu-dropdown.open { display: block; }
+  .submenu-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text);
+    border: none; background: none; width: 100%; text-align: left;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .submenu-item:last-child { border-bottom: none; }
+  .submenu-item:hover { background: var(--surface2); }
+  .submenu-item:active { background: var(--border); }
+  .submenu-icon { font-size: 20px; flex-shrink: 0; }
+  .submenu-desc { font-size: 11px; font-weight: 400; color: var(--text2); letter-spacing: 0; font-family: 'Inter', sans-serif; display: block; text-transform: none; margin-top: 1px; }
+
+  /* ─── FORMULARIOS SOBRATES / TRUEQUE ────── */
+  .form-header.sobrates { border-top: 4px solid #6D4C8A; }
+  .form-header.trueque  { border-top: 4px solid #8A4C4C; }
+  .btn-submit.sobrates  { background: #6D4C8A; color: #fff; }
+  .btn-submit.sobrates:hover { background: #5A3A75; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(109,76,138,0.3); }
+  .btn-submit.trueque   { background: #8A4C4C; color: #fff; }
+  .btn-submit.trueque:hover  { background: #6F3A3A; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(138,76,76,0.3); }
+
   @media (max-width: 640px) {
     .tabs-wrapper, .form-container { padding: 16px 16px 0; }
     .form-body, .form-footer, .form-header, .records-section { padding-left: 20px; padding-right: 20px; }
@@ -501,6 +572,38 @@
             <div class="photo-text">Toca para adjuntar fotos · Puedes seleccionar <strong>varias a la vez</strong></div>
             <div class="photo-preview" id="preview-rotura"></div>
           </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- ── OTRAS NOVEDADES ──────────────────── -->
+      <div style="position:relative;" id="otras-btn-wrap">
+        <div class="otras-btn-center">
+          <button type="button" class="btn-otras-novedades" onclick="toggleOtrasMenu(event)">
+            <span class="otras-icon">🤔</span>
+            <span class="otras-label">
+              Otras Novedades
+              <span class="otras-sub">Sobrantes · Faltantes · Trueque</span>
+            </span>
+            <span class="otras-arrow" id="otras-arrow">▾</span>
+          </button>
+        </div>
+        <div class="submenu-dropdown" id="otras-submenu">
+          <button class="submenu-item" onclick="switchTab('sobrates'); closeOtrasMenu()">
+            <span class="submenu-icon">⚖️</span>
+            <span>
+              Sobrantes o Faltantes
+              <span class="submenu-desc">Reporte de diferencia en cantidades de entrega</span>
+            </span>
+          </button>
+          <button class="submenu-item" onclick="switchTab('trueque'); closeOtrasMenu()">
+            <span class="submenu-icon">🔄</span>
+            <span>
+              Trueque
+              <span class="submenu-desc">Producto recibido equivocado en entrega</span>
+            </span>
+          </button>
         </div>
       </div>
 
@@ -678,9 +781,149 @@
       </div>
     </div>
   </div>
-</div>
+  <!-- ════════════════════════════════════════
+       FORMULARIO 3: SOBRANTES O FALTANTES
+  ═════════════════════════════════════════ -->
+  <div class="form-card" id="card-sobrates">
+    <div class="form-header sobrates">
+      <div class="form-title">⚖️ Sobrantes o Faltantes</div>
+      <div class="form-subtitle">Reporte de diferencias en cantidades recibidas en entrega</div>
+    </div>
 
-<!-- ─── SETUP PANEL ──────────────────────── -->
+    <form class="form-body" id="form-sobrates" onsubmit="submitForm(event,'sobrates')">
+      <div class="grid-2">
+        <div class="field">
+          <label>DT# <span class="req">*</span></label>
+          <input type="text" name="DT" placeholder="123456789012" maxlength="12" inputmode="numeric" pattern="\d{12}" title="Debe tener exactamente 12 dígitos" required autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Entrega <span class="req">*</span></label>
+          <input type="text" name="Entrega" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="\d{10}" title="Debe tener exactamente 10 dígitos" required autocomplete="off">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Cantidad <span class="req">*</span></label>
+          <input type="number" name="Cantidad" placeholder="0" min="1" required>
+        </div>
+        <div class="field">
+          <label>Referencia <span class="req">*</span></label>
+          <input type="text" name="Referencia" placeholder="Código alfanumérico" required autocomplete="off" autocapitalize="characters">
+        </div>
+        <div class="field col-span-2">
+          <label>Tipo de Novedad <span class="req">*</span></label>
+          <select name="TipoNovedad" required>
+            <option value="">Seleccionar…</option>
+            <option value="SOBRANTE">Sobrante</option>
+            <option value="FALTANTE">Faltante</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea name="Observacion" placeholder="Detalles adicionales sobre el sobrante o faltante…"></textarea>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-sobrates"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit sobrates" onclick="submitForm(event,'sobrates')">📤 Guardar Registro</button>
+      <button class="btn-clear" onclick="clearFormSimple('sobrates')">Limpiar</button>
+      <span class="send-status" id="status-sobrates"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('sobrates')">▸ Ver registros guardados (0)</span>
+      <div class="records-table-wrap" id="records-sobrates">
+        <table class="records-table">
+          <thead>
+            <tr><th>#</th><th>DT#</th><th>Entrega</th><th>Cantidad</th><th>Referencia</th><th>Tipo</th></tr>
+          </thead>
+          <tbody id="records-body-sobrates"></tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión · Se guardan en hoja SOBRANTES_FALTANTES de Google Sheets.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       FORMULARIO 4: TRUEQUE
+  ═════════════════════════════════════════ -->
+  <div class="form-card" id="card-trueque">
+    <div class="form-header trueque">
+      <div class="form-title">🔄 Trueque</div>
+      <div class="form-subtitle">Producto recibido equivocado — señala lo que llegó vs. lo que debía llegar</div>
+    </div>
+
+    <form class="form-body" id="form-trueque" onsubmit="submitForm(event,'trueque')">
+      <div class="grid-2">
+        <div class="field">
+          <label>DT# <span class="req">*</span></label>
+          <input type="text" name="DT" placeholder="123456789012" maxlength="12" inputmode="numeric" pattern="\d{1,12}" title="Máximo 12 dígitos" required autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Entrega <span class="req">*</span></label>
+          <input type="text" name="Entrega" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="\d{1,10}" title="Máximo 10 dígitos" required autocomplete="off">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Recibo Ref <span class="req">*</span></label>
+          <input type="text" name="ReciboRef" placeholder="Ref. que llegó" required autocomplete="off" autocapitalize="characters">
+        </div>
+        <div class="field">
+          <label>En Vez De <span class="req">*</span></label>
+          <input type="text" name="EnVezDe" placeholder="Ref. que debía llegar" required autocomplete="off" autocapitalize="characters">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea name="Observacion" placeholder="Detalles adicionales sobre el trueque…"></textarea>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-trueque"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit trueque" onclick="submitForm(event,'trueque')">📤 Guardar Registro</button>
+      <button class="btn-clear" onclick="clearFormSimple('trueque')">Limpiar</button>
+      <span class="send-status" id="status-trueque"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('trueque')">▸ Ver registros guardados (0)</span>
+      <div class="records-table-wrap" id="records-trueque">
+        <table class="records-table">
+          <thead>
+            <tr><th>#</th><th>DT#</th><th>Entrega</th><th>Recibo Ref</th><th>En Vez De</th></tr>
+          </thead>
+          <tbody id="records-body-trueque"></tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión · Se guardan en hoja TRUEQUE de Google Sheets.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
 <div id="setup-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;"></div>
 <div id="setup-panel" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:201;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
   <div style="text-align:center;margin-bottom:20px;">
@@ -725,7 +968,7 @@
 <script>
   // ─── State ────────────────────────────────
   let scriptUrl = 'https://script.google.com/macros/s/AKfycbyhUYbiXVq3MfRJOxDMDMNzZHoKk79NOUxl86p7ojOPs5L6jMOmDjrpQyIxilSv9QJOLQ/exec';
-  let records = { rotura: [], loginversa: [] };
+  let records = { rotura: [], loginversa: [], sobrates: [], trueque: [] };
   let refRowCount = 0;
 
   // ─── Init ─────────────────────────────────
@@ -829,12 +1072,47 @@
     });
   }
 
+  // ─── Submenu Otras Novedades ──────────────
+  function toggleOtrasMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('otras-submenu');
+    const arrow = document.getElementById('otras-arrow');
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const isOpen = menu.classList.toggle('open');
+    if (isOpen) {
+      const menuWidth = 280;
+      let left = rect.left + rect.width / 2 - menuWidth / 2;
+      if (left < 8) left = 8;
+      if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
+      menu.style.top = (rect.bottom + 6) + 'px';
+      menu.style.left = left + 'px';
+      menu.style.width = menuWidth + 'px';
+    }
+    if (arrow) arrow.classList.toggle('open', isOpen);
+  }
+  function closeOtrasMenu() {
+    const menu = document.getElementById('otras-submenu');
+    const arrow = document.getElementById('otras-arrow');
+    if (menu) menu.classList.remove('open');
+    if (arrow) arrow.classList.remove('open');
+  }
+  document.addEventListener('click', function() { closeOtrasMenu(); });
+
   // ─── Tabs ─────────────────────────────────
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.form-card').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    const tabBtn = document.querySelector(`[data-tab="${tab}"]`);
+    if (tabBtn) tabBtn.classList.add('active');
     document.getElementById(`card-${tab}`).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── Clear form simple (sin refs) ─────────
+  function clearFormSimple(formId) {
+    document.getElementById(`form-${formId}`).reset();
+    document.getElementById(`status-${formId}`).textContent = '';
   }
 
   // ─── Photo preview ─────────────────────────
@@ -1010,7 +1288,6 @@
 
   function buildPayload(formId, data, fotoUrl) {
     const ts = new Date().toISOString();
-    // Use placeholder; Apps Script will replace with real Drive URL after upload
     const foto = '__FOTO__';
     if (formId === 'rotura') {
       const headers = ['No de Entrega','Fecha','Proceso','Categoria','Referencia','Cantidad','Empaque','Observacion','Reporta','Timestamp','Foto (Drive)','Latitud','Longitud','Ubicacion (Maps)'];
@@ -1022,6 +1299,20 @@
               data.Observacion, data.Reporta, ts, foto,
               data._lat || '', data._lng || '', data._mapsUrl || '']
       }));
+    } else if (formId === 'sobrates') {
+      return [{
+        form: 'SOBRANTES_FALTANTES',
+        headers: ['DT#','Entrega','Cantidad','Referencia','Tipo','Observacion','Timestamp','Latitud','Longitud','Ubicacion (Maps)'],
+        row: [data.DT, data.Entrega, data.Cantidad, data.Referencia, data.TipoNovedad, data.Observacion||'', ts,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }];
+    } else if (formId === 'trueque') {
+      return [{
+        form: 'TRUEQUE',
+        headers: ['DT#','Entrega','Recibo Ref','En Vez De','Observacion','Timestamp','Latitud','Longitud','Ubicacion (Maps)'],
+        row: [data.DT, data.Entrega, data.ReciboRef, data.EnVezDe, data.Observacion||'', ts,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }];
     } else {
       return [{
         form: 'LOGINVERSA',
@@ -1052,7 +1343,6 @@
     }
   }
 
-  // ─── Local records ─────────────────────────
   function renderRecords(formId) {
     const tbody = document.getElementById(`records-body-${formId}`);
     tbody.innerHTML = '';
@@ -1065,6 +1355,12 @@
         tr.innerHTML = `<td>${records.rotura.length - i}</td><td>${r.NoEntrega||''}</td>
           <td>${r.Fecha||''}</td><td style="max-width:180px;font-size:11px">${refSummary}</td>
           <td>${r.Proceso||''}</td><td style="font-size:11px">${(r.Reporta||'').split(' ')[0]}</td>`;
+      } else if (formId === 'sobrates') {
+        tr.innerHTML = `<td>${records.sobrates.length - i}</td><td>${r.DT||''}</td>
+          <td>${r.Entrega||''}</td><td>${r.Cantidad||''}</td><td>${r.Referencia||''}</td><td>${r.TipoNovedad||''}</td>`;
+      } else if (formId === 'trueque') {
+        tr.innerHTML = `<td>${records.trueque.length - i}</td><td>${r.DT||''}</td>
+          <td>${r.Entrega||''}</td><td>${r.ReciboRef||''}</td><td>${r.EnVezDe||''}</td>`;
       } else {
         tr.innerHTML = `<td>${records.loginversa.length - i}</td><td>${r.Entrega||''}</td><td>${r.Fecha||''}</td>
           <td>${r.MotivoRetorno||''}</td><td>${r.TipoDevolucion||''}</td><td>${r.Estado||''}</td>
