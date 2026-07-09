@@ -1431,11 +1431,29 @@
   document.getElementById('setup-backdrop').addEventListener('click', closeSetup);
   document.getElementById('config-banner').addEventListener('click', openSetup);
 
-  // ─── PWA Service Worker ──────────────────
+  // ─── PWA Service Worker (con auto-actualización) ──────
+  let refrescandoPorSW = false;
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js')
+        .then(reg => {
+          // Revisa si hay una versión nueva cada vez que se abre/reactiva la app
+          reg.update();
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') reg.update();
+          });
+        })
         .catch(err => console.log('SW error:', err));
+    });
+
+    // Cuando un Service Worker nuevo toma el control, recarga la página
+    // automáticamente para que el usuario SIEMPRE vea la última versión
+    // sin tener que borrar caché ni reinstalar nada.
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refrescandoPorSW) return;
+      refrescandoPorSW = true;
+      window.location.reload();
     });
   }
 </script>
