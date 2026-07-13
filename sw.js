@@ -1,6 +1,6 @@
 // Sube este número CADA VEZ que subas cambios nuevos al repo.
 // Es lo que fuerza a los celulares a bajar la versión nueva.
-const CACHE_NAME = 'decorbaq-v3';
+const CACHE_NAME = 'decorbaq-v4';
 
 const ASSETS = [
   '/decorbaq-app/',
@@ -9,8 +9,21 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
+  // FIX: antes se usaba cache.addAll(ASSETS), que es "todo o nada":
+  // si Google Fonts fallaba un instante, el SW nuevo NUNCA se instalaba
+  // y el celular quedaba atrapado en la versión vieja.
+  // Ahora cada recurso se cachea por separado; si uno falla (ej. la fuente),
+  // los demás se guardan igual y la instalación continúa.
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(
+        ASSETS.map(url =>
+          cache.add(url).catch(err => {
+            console.warn('SW: no se pudo precachear', url, err);
+          })
+        )
+      )
+    )
   );
   self.skipWaiting();
 });
@@ -42,11 +55,23 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(req)
         .then(res => {
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, resClone));
+          // FIX: solo guardar en caché respuestas VÁLIDAS (status 200-299).
+          // Antes, si el servidor devolvía un 404 o error durante un
+          // despliegue, esa página rota quedaba cacheada como "la app"
+          // y el celular la seguía mostrando después.
+          if (res && res.ok) {
+            const resClone = res.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(req, resClone));
+          }
           return res;
         })
-        .catch(() => caches.match(req))
+        .catch(() =>
+          // FIX: doble fallback — si no hay coincidencia exacta de la URL,
+          // servir el index.html precacheado en lugar de pantalla en blanco.
+          caches.match(req).then(cached =>
+            cached || caches.match('/decorbaq-app/index.html')
+          )
+        )
     );
   } else {
     // ─── CACHE-FIRST para el resto (fuentes, íconos, etc) ───
