@@ -1117,19 +1117,35 @@
   }
 
   // ─── Photo preview ─────────────────────────
+  // FIX: usa URL.createObjectURL en lugar de readAsDataURL.
+  // Antes se cargaba cada foto COMPLETA en memoria (5-15 MB c/u en base64)
+  // solo para mostrar una miniatura, lo que agotaba la RAM en celulares
+  // de gama media/baja y hacía que la app dejara de previsualizar y guardar.
+  let previewObjectUrls = [];
+  function liberarPreviews() {
+    previewObjectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+    previewObjectUrls = [];
+  }
   function previewPhotos(input, previewId) {
     const preview = document.getElementById(previewId);
+    liberarPreviews();
     preview.innerHTML = '';
-    [...input.files].forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'photo-thumb';
-        preview.appendChild(img);
-      };
-      reader.readAsDataURL(file);
+    const files = [...(input.files || [])];
+    files.forEach(file => {
+      const url = URL.createObjectURL(file); // referencia liviana, no copia el archivo a memoria
+      previewObjectUrls.push(url);
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'photo-thumb';
+      img.loading = 'lazy';
+      preview.appendChild(img);
     });
+    if (files.length > 0) {
+      const info = document.createElement('div');
+      info.style.cssText = 'width:100%;font-size:11px;color:var(--text2);margin-top:4px;';
+      info.textContent = `🖼️ ${files.length} foto(s) seleccionada(s)`;
+      preview.appendChild(info);
+    }
   }
 
   // ─── Reporta otro ────────────────────────
@@ -1173,39 +1189,112 @@
       }
     }
 
-    // Leer y comprimir todas las fotos
+    // ─── Leer y comprimir todas las fotos ───────────────────
+    // FIX (fallas en Android gama media/baja):
+    //  1. createImageBitmap: decodifica la imagen SIN cargar el archivo
+    //     completo como base64 en memoria (antes: readAsDataURL de la
+    //     foto original = 10-20 MB de RAM por foto).
+    //  2. onerror + timeout: antes, si una foto fallaba al decodificar,
+    //     la promesa NUNCA se resolvía y la app se quedaba congelada
+    //     sin mensaje ("no da guardar"). Ahora falla con aviso claro.
+    //  3. Procesamiento secuencial con liberación de memoria (bitmap.close,
+    //     revokeObjectURL, canvas a 1x1) entre foto y foto.
     const fotoInput = form.querySelector('input[type="file"]');
     const fotos = []; // array de {base64, mime, nombre}
-    if (fotoInput && fotoInput.files && fotoInput.files.length > 0) {
-      const compressFile = (file) => new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const img = new Image();
-          img.onload = () => {
-            const MAX = 800;
-            let w = img.width, h = img.height;
-            if (w > MAX || h > MAX) {
-              if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-              else { w = Math.round(w * MAX / h); h = MAX; }
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            resolve({ base64: canvas.toDataURL('image/jpeg', 0.7), mime: 'image/jpeg', nombre: file.name });
-          };
-          img.src = ev.target.result;
+    const btnEnviar = form.parentElement.querySelector('.btn-submit') || form.querySelector('.btn-submit');
+    const statusFotos = document.getElementById(`status-${formId}`);
+    if (btnEnviar) btnEnviar.disabled = true;
+
+    try {
+      if (fotoInput && fotoInput.files && fotoInput.files.length > 0) {
+
+        const dibujarYComprimir = (fuente, ancho, alto) => {
+          const MAX = 800;
+          let w = ancho, h = alto;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(fuente, 0, 0, w, h);
+          const b64 = canvas.toDataURL('image/jpeg', 0.7);
+          canvas.width = 1; canvas.height = 1; // liberar memoria del canvas
+          return b64;
         };
-        reader.readAsDataURL(file);
-      });
-      // Nombrar cada foto con el No. de Entrega
-      const noEntrega = (formId === 'rotura' ? data.NoEntrega : data.Entrega) || 'SIN-ENTREGA';
-      let fotoIdx = 1;
-      for (const file of Array.from(fotoInput.files)) {
-        const f = await compressFile(file);
-        f.nombre = `${noEntrega}_${String(fotoIdx).padStart(2,'0')}.jpg`;
-        fotoIdx++;
-        fotos.push(f);
+
+        const compressFile = async (file) => {
+          // Ruta 1: createImageBitmap (eficiente en memoria, Android/Chrome moderno)
+          if ('createImageBitmap' in window) {
+            try {
+              let bmp;
+              try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+              catch(e1) { bmp = await createImageBitmap(file); } // navegadores sin soporte de opciones
+              const b64 = dibujarYComprimir(bmp, bmp.width, bmp.height);
+              if (bmp.close) bmp.close(); // liberar memoria del bitmap
+              return { base64: b64, mime: 'image/jpeg', nombre: file.name };
+            } catch(e) { /* cae a la ruta 2 */ }
+          }
+          // Ruta 2: Image + objectURL, con manejo de error y timeout
+          return await new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            const timer = setTimeout(() => {
+              img.src = '';
+              URL.revokeObjectURL(url);
+              reject(new Error('Tiempo agotado al procesar la foto'));
+            }, 20000);
+            img.onload = () => {
+              clearTimeout(timer);
+              try {
+                const b64 = dibujarYComprimir(img, img.naturalWidth, img.naturalHeight);
+                resolve({ base64: b64, mime: 'image/jpeg', nombre: file.name });
+              } catch(e) {
+                reject(e);
+              } finally {
+                img.src = '';
+                URL.revokeObjectURL(url);
+              }
+            };
+            img.onerror = () => {
+              clearTimeout(timer);
+              URL.revokeObjectURL(url);
+              reject(new Error('No se pudo leer la foto'));
+            };
+            img.src = url;
+          });
+        };
+
+        // Nombrar cada foto con el No. de Entrega
+        const noEntrega = (formId === 'rotura' ? data.NoEntrega : data.Entrega) || 'SIN-ENTREGA';
+        const archivos = Array.from(fotoInput.files);
+        let fotoIdx = 1;
+        let fotosFallidas = 0;
+        for (let i = 0; i < archivos.length; i++) {
+          if (statusFotos) {
+            statusFotos.className = 'send-status status-sending';
+            statusFotos.textContent = `📷 Procesando foto ${i + 1} de ${archivos.length}…`;
+          }
+          try {
+            const f = await compressFile(archivos[i]);
+            f.nombre = `${noEntrega}_${String(fotoIdx).padStart(2,'0')}.jpg`;
+            fotoIdx++;
+            fotos.push(f);
+          } catch(errFoto) {
+            fotosFallidas++;
+            console.warn('Foto no procesada:', archivos[i].name, errFoto);
+          }
+        }
+        if (fotosFallidas > 0) {
+          showToast(`⚠️ ${fotosFallidas} foto(s) no se pudieron procesar (memoria o formato). El registro se guardará con ${fotos.length} foto(s).`, 'err');
+        }
+        if (statusFotos) statusFotos.textContent = '';
       }
+    } catch(errGeneral) {
+      if (btnEnviar) btnEnviar.disabled = false;
+      if (statusFotos) { statusFotos.className = 'send-status status-err'; statusFotos.textContent = '❌ Error al procesar las fotos'; }
+      showToast('⚠️ Error al procesar las fotos. Intenta con menos fotos o vuelve a tomarlas.', 'err');
+      return;
     }
 
     // Capturar ubicación ANTES de guardar y enviar
@@ -1285,6 +1374,7 @@
     }
 
     clearForm(formId);
+    if (btnEnviar) btnEnviar.disabled = false; // reactivar botón al terminar
   }
 
   function buildPayload(formId, data, fotoUrl) {
@@ -1332,6 +1422,7 @@
     form.reset();
     const today = new Date().toISOString().split('T')[0];
     form.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
+    liberarPreviews(); // liberar memoria de las miniaturas
     const pr = document.getElementById('preview-rotura');
     if (pr) pr.innerHTML = '';
     document.getElementById(`status-${formId}`).textContent = '';
@@ -1452,6 +1543,14 @@
     // sin tener que borrar caché ni reinstalar nada.
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (refrescandoPorSW) return;
+      // FIX: no recargar si el usuario tiene un formulario a medio llenar
+      // o fotos seleccionadas — la recarga automática le borraba el trabajo
+      // y parecía una "falla" de la app. La actualización se aplica en la
+      // próxima apertura.
+      const formularioEnUso =
+        [...document.querySelectorAll('input[type="file"]')].some(i => i.files && i.files.length > 0) ||
+        [...document.querySelectorAll('input[type="text"], textarea')].some(i => i.value.trim() !== '');
+      if (formularioEnUso) return;
       refrescandoPorSW = true;
       window.location.reload();
     });
