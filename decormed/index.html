@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">DECORBAQ – Novedades Operativas</title>
+<meta name="theme-color" content="#1A1714">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta id="apple-title-meta" name="apple-mobile-web-app-title" content="DECORBAQ">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap');
+
+  :root {
+    --bg: #F2EFEB;
+    --surface: #FFFFFF;
+    --surface2: #F8F6F3;
+    --border: #DDD9D3;
+    --accent: #C0392B;
+    --accent2: #E74C3C;
+    --accent-dark: #A93226;
+    --accent-rgb: 192,57,43;
+    --text: #1A1714;
+    --text2: #6B6560;
+    --text3: #9E9892;
+    --success: #27AE60;
+    --warning: #E67E22;
+    --tab1: #C0392B;
+    --tab2: #2C3E50;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  header {
+    background: var(--text);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .logo span { color: var(--accent2); }
+
+  .header-tag {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ─── CONFIG BANNER ──────────────────────── */
+  #config-banner {
+    background: #FFF3CD;
+    border-bottom: 2px solid #F0B429;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #856404;
+    -webkit-tap-highlight-color: rgba(240,180,41,0.2);
+    user-select: none;
+    min-height: 52px;
+  }
+  #config-banner strong { font-weight: 600; }
+  #config-banner:active { background: #FFE99A; }
+  .config-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ─── TABS ───────────────────────────────── */
+  .tabs-wrapper {
+    padding: 32px 32px 0;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--border);
+    border-radius: 10px 10px 0 0;
+    padding: 4px 4px 0;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    border-radius: 7px 7px 0 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .tab-btn:hover { background: rgba(255,255,255,0.5); }
+  .tab-btn.active[data-tab="rotura"] { background: var(--tab1); color: #fff; }
+  .tab-btn.active[data-tab="loginversa"] { background: var(--tab2); color: #fff; }
+  .tab-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+
+  /* ─── FORM CONTAINER ─────────────────────── */
+  .form-container {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    padding: 0 32px;
+  }
+
+  .form-card {
+    background: var(--surface);
+    border-radius: 0 0 12px 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: none;
+  }
+  .form-card.active { display: block; }
+
+  .form-header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-header.rotura { border-top: 4px solid var(--tab1); }
+  .form-header.loginversa { border-top: 4px solid var(--tab2); }
+
+  .form-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .form-subtitle { font-size: 13px; color: var(--text2); }
+
+  .form-body { padding: 28px 36px; }
+
+  /* ─── GRID ───────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+  .section-divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* ─── FIELDS ─────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  label .req { color: var(--accent); margin-left: 2px; }
+
+  input, select, textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.1);
+    background: #fff;
+  }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6560' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  textarea { resize: vertical; min-height: 80px; }
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+
+  /* ─── PHOTO UPLOAD ───────────────────────── */
+  .photo-upload {
+    border: 2px dashed var(--border);
+    border-radius: 7px;
+    background: var(--surface2);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .photo-upload:hover { border-color: var(--accent); background: #FFF8F7; }
+  .photo-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .photo-icon { font-size: 28px; margin-bottom: 6px; }
+  .photo-text { font-size: 13px; color: var(--text2); }
+  .photo-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .photo-thumb { width: 64px; height: 64px; border-radius: 5px; object-fit: cover; border: 1px solid var(--border); }
+
+  /* ─── SUBMIT ─────────────────────────────── */
+  .form-footer {
+    padding: 20px 36px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-submit {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 13px 36px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-submit.rotura { background: var(--tab1); color: #fff; }
+  .btn-submit.rotura:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(var(--accent-rgb),0.3); }
+  .btn-submit.loginversa { background: var(--tab2); color: #fff; }
+  .btn-submit.loginversa:hover { background: #1A252F; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(44,62,80,0.3); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  .btn-clear {
+    font-size: 13px; color: var(--text2); background: none; border: 1.5px solid var(--border);
+    border-radius: 7px; padding: 11px 20px; cursor: pointer; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-clear:hover { border-color: var(--text2); color: var(--text); }
+
+  .send-status { font-size: 13px; }
+  .status-sending { color: var(--warning); }
+  .status-ok { color: var(--success); }
+  .status-err { color: var(--accent); }
+
+  /* ─── SETUP MODAL ────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 16px 40px;
+    display: none;
+  }
+  .modal-overlay.open { display: -webkit-flex !important; display: flex !important; }
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 36px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    margin: auto;
+  }
+  .modal h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+  .modal .step { background: var(--surface2); border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+  .modal .step-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--accent); font-size: 18px; margin-bottom: 4px; }
+  .modal .step p { margin-bottom: 0; color: var(--text); }
+  .modal input { margin-top: 8px; }
+  .modal .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-primary { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 12px 28px; background: var(--accent); color: #fff; border: none; border-radius: 7px; cursor: pointer; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-secondary { font-size: 13px; color: var(--text2); background: none; border: 1.5px solid var(--border); border-radius: 7px; padding: 11px 20px; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .code-block {
+    background: #1A1714; color: #F0EBE3; font-family: monospace;
+    font-size: 11px; padding: 14px 16px; border-radius: 8px; margin: 10px 0;
+    white-space: pre; overflow-x: auto; line-height: 1.7;
+  }
+  .code-comment { color: #6B6560; }
+  .code-key { color: var(--accent2); }
+  .code-val { color: #27AE60; }
+
+  /* ─── GEO STATUS ─────────────────────────── */
+  .geo-status {
+    display: none;
+    font-size: 12px;
+    border-radius: 7px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .geo-pending { background: #FFF3CD; color: #856404; border: 1px solid #F0B429; }
+  .geo-ok      { background: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+  .geo-err     { background: #FCE4E4; color: #7B1818; border: 1px solid #F5C6C6; }
+
+  /* ─── TOAST ──────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    padding: 14px 28px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg); z-index: 999; transition: opacity 0.3s; opacity: 0;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; }
+  #toast.ok { background: var(--success); color: #fff; }
+  #toast.err { background: var(--accent); color: #fff; }
+
+  /* ─── RECORDS TABLE ──────────────────────── */
+  .records-section { padding: 0 36px 28px; }
+  .records-toggle { font-size: 12px; color: var(--text2); cursor: pointer; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px; }
+  .records-table-wrap { overflow-x: auto; margin-top: 12px; display: none; }
+  .records-table-wrap.open { display: block; }
+  .records-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .records-table th { background: var(--surface2); padding: 8px 12px; text-align: left; font-weight: 600; font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text2); border-bottom: 2px solid var(--border); }
+  .records-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .records-table tr:hover td { background: var(--surface2); }
+
+  /* ─── MULTI-REF TABLE ────────────────────── */
+  .ref-section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text2); margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ref-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .ref-table thead th {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--text2); padding: 8px 10px; background: var(--surface2);
+    border-bottom: 2px solid var(--border); text-align: left;
+  }
+  .ref-table tbody tr { border-bottom: 1px solid var(--border); }
+  .ref-table tbody tr:last-child { border-bottom: none; }
+  .ref-table td { padding: 6px 6px; vertical-align: middle; }
+  .ref-table td input, .ref-table td select {
+    padding: 8px 10px; font-size: 13px; border-radius: 6px;
+  }
+  .ref-table td.td-num { width: 32px; text-align: center; font-size: 12px; color: var(--text3); font-weight: 600; }
+  .ref-table td.td-cat { width: 170px; }
+  .ref-table td.td-ref { }
+  .ref-table td.td-cant { width: 90px; }
+  .ref-table td.td-emp { width: 110px; }
+  .ref-table td.td-del { width: 38px; text-align: center; }
+  .btn-del-row {
+    background: none; border: none; cursor: pointer; color: var(--text3);
+    font-size: 18px; line-height: 1; padding: 4px; border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .btn-del-row:hover { color: var(--accent); }
+  .btn-add-ref {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+    color: var(--accent); background: #FFF0EF; border: 1.5px dashed var(--accent);
+    border-radius: 7px; padding: 8px 16px; cursor: pointer;
+    transition: all 0.2s; margin-top: 2px;
+  }
+  .btn-add-ref:hover { background: #FFE0DE; }
+  .ref-summary {
+    font-size: 11px; color: var(--text2);
+    background: var(--surface2); border-radius: 6px; padding: 6px 12px;
+    margin-top: 6px; display: none;
+  }
+  .ref-summary.visible { display: block; }
+
+  /* ─── OTRAS NOVEDADES BUTTON ─────────────── */
+  .otras-btn-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .btn-otras-novedades {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 18px;
+    background: #1A1714;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+  }
+  .btn-otras-novedades:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+  .btn-otras-novedades:active { transform: scale(0.98); }
+  .otras-icon { font-size: 20px; flex-shrink: 0; line-height: 1; }
+  .otras-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #fff;
+    display: flex; flex-direction: column; gap: 1px; text-align: left;
+  }
+  .otras-sub {
+    font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 400;
+    letter-spacing: 0; text-transform: none; color: rgba(255,255,255,0.65);
+  }
+  .otras-arrow { font-size: 12px; color: rgba(255,255,255,0.8); transition: transform 0.2s; }
+  .otras-arrow.open { transform: rotate(180deg); }
+
+  /* ─── SUBMENU DROPDOWN ───────────────────── */
+  .submenu-dropdown {
+    display: none;
+    position: fixed;
+    min-width: 280px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    z-index: 9999;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+  .submenu-dropdown.open { display: block; }
+  .submenu-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text);
+    border: none; background: none; width: 100%; text-align: left;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .submenu-item:last-child { border-bottom: none; }
+  .submenu-item:hover { background: var(--surface2); }
+  .submenu-item:active { background: var(--border); }
+  .submenu-icon { font-size: 20px; flex-shrink: 0; }
+  .submenu-desc { font-size: 11px; font-weight: 400; color: var(--text2); letter-spacing: 0; font-family: 'Inter', sans-serif; display: block; text-transform: none; margin-top: 1px; }
+
+  /* ─── FORMULARIOS SOBRATES / TRUEQUE ────── */
+  .form-header.sobrates { border-top: 4px solid #6D4C8A; }
+  .form-header.trueque  { border-top: 4px solid #8A4C4C; }
+  .btn-submit.sobrates  { background: #6D4C8A; color: #fff; }
+  .btn-submit.sobrates:hover { background: #5A3A75; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(109,76,138,0.3); }
+  .btn-submit.trueque   { background: #8A4C4C; color: #fff; }
+  .btn-submit.trueque:hover  { background: #6F3A3A; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(138,76,76,0.3); }
+
+  @media (max-width: 640px) {
+    .tabs-wrapper, .form-container { padding: 16px 16px 0; }
+    .form-body, .form-footer, .form-header, .records-section { padding-left: 20px; padding-right: 20px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .col-span-2, .col-span-3 { grid-column: span 1; }
+    .tabs-wrapper { padding-bottom: 0; }
+    .modal { padding: 24px 20px; }
+    .modal-overlay { padding: 12px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo" id="logo-el">DECOR<span id="logo-suffix">BAQ</span></div>
+  <span class="header-tag">Novedades Operativas</span>
+  <button id="btn-header-config" style="background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);color:#fff;border-radius:8px;padding:12px 18px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;">⚙️ Configurar</button>
+</header>
+
+<!-- CONFIG BANNER -->
+<div id="config-banner" onclick="openSetup()" style="cursor:pointer;">
+  <span class="config-icon">⚙️</span>
+  <span><strong>Configuración requerida</strong> — toca aquí para conectar Google Sheets</span>
+  <span style="margin-left:auto;font-size:20px;line-height:1;padding-left:8px;">›</span>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="rotura" onclick="switchTab('rotura')">
+      <span class="tab-dot"></span> 🔴 Rotura / Averías
+    </button>
+    <button class="tab-btn" data-tab="loginversa" onclick="switchTab('loginversa')">
+      <span class="tab-dot"></span> 🔵 Log Inversa
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     FORMULARIO 1: ROTURA
+═════════════════════════════════════════ -->
+<div class="form-container">
+  <div class="form-card active" id="card-rotura">
+
+    <div class="form-header rotura">
+      <div class="form-title">Registro de Rotura / Avería</div>
+      <div class="form-subtitle">Reporte de mercancía dañada durante el proceso operativo</div>
+    </div>
+
+    <form class="form-body" id="form-rotura" onsubmit="submitForm(event,'rotura')">
+      <div class="grid-2">
+        <div class="field">
+          <label>No. de Entrega <span class="req">*</span></label>
+          <input type="text" name="NoEntrega" placeholder="Ej. ENT-20240115" required>
+        </div>
+        <div class="field">
+          <label>Fecha <span class="req">*</span></label>
+          <input type="date" name="Fecha" required>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- REFERENCIAS MÚLTIPLES -->
+      <div class="ref-section-label">
+        <span>📦 Referencias afectadas <span style="color:var(--accent)">*</span></span>
+        <span id="ref-count-label" style="font-weight:400;color:var(--text3)">1 ítem</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th class="td-num">#</th>
+              <th class="td-cat">Categoría</th>
+              <th class="td-ref">Referencia</th>
+              <th class="td-cant">Cantidad</th>
+              <th class="td-emp">Empaque</th>
+              <th class="td-del"></th>
+            </tr>
+          </thead>
+          <tbody id="ref-tbody"></tbody>
+        </table>
+      </div>
+      <button type="button" class="btn-add-ref" onclick="addRefRow()">＋ Agregar referencia</button>
+      <div class="ref-summary" id="ref-summary"></div>
+
+      <hr class="section-divider">
+
+      <div class="field">
+        <label>Proceso</label>
+        <select name="Proceso">
+          <option value="">Seleccionar…</option>
+          <option>Descargue Mula</option>
+          <option>Revision de Mula</option>
+          <option>Alistamiento de Despacho</option>
+          <option>Transporte a Cliente</option>
+          <option>Descargue Cliente</option>
+        </select>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field col-span-2">
+          <label>📷 Foto (evidencia)</label>
+          <div class="photo-upload" id="photo-drop-rotura">
+            <input type="file" name="FotoFile" accept="image/*" multiple onchange="previewPhotos(this,'preview-rotura')">
+            <div class="photo-icon">📷</div>
+            <div class="photo-text">Toca para adjuntar fotos · Puedes seleccionar <strong>varias a la vez</strong></div>
+            <div class="photo-preview" id="preview-rotura"></div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- ── OTRAS NOVEDADES ──────────────────── -->
+      <div style="position:relative;" id="otras-btn-wrap">
+        <div class="otras-btn-center">
+          <button type="button" class="btn-otras-novedades" onclick="toggleOtrasMenu(event)">
+            <span class="otras-icon">🤔</span>
+            <span class="otras-label">
+              Otras Novedades
+              <span class="otras-sub">Sobrantes · Faltantes · Trocado</span>
+            </span>
+            <span class="otras-arrow" id="otras-arrow">▾</span>
+          </button>
+        </div>
+        <div class="submenu-dropdown" id="otras-submenu">
+          <button class="submenu-item" onclick="switchTab('sobrates'); closeOtrasMenu()">
+            <span class="submenu-icon">⚖️</span>
+            <span>
+              Sobrantes o Faltantes
+              <span class="submenu-desc">Reporte de diferencia en cantidades de entrega</span>
+            </span>
+          </button>
+          <button class="submenu-item" onclick="switchTab('trueque'); closeOtrasMenu()">
+            <span class="submenu-icon">🔄</span>
+            <span>
+              Trocado
+              <span class="submenu-desc">Producto recibido equivocado en entrega</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field col-span-2">
+          <label>Observación</label>
+          <textarea name="Observacion" placeholder="Descripción detallada del daño, circunstancias, etc."></textarea>
+        </div>
+        <div class="field col-span-2">
+          <label>Reporta <span class="req">*</span></label>
+          <select name="Reporta" id="reporta-select-rotura" onchange="toggleOtroReporta('rotura')">
+            <option value="">Seleccionar responsable…</option>
+            <option>CARVAJAL TRUJILLO ALVARO JAVIER</option>
+            <option>CABARCAS VELASQUEZ WILMER GUILLERMO</option>
+            <option>RANFER DE JESUS TAPIA VILLEGAS</option>
+            <option>HEREIRA MARTINEZ ROSULO MANUEL</option>
+            <option>JEISON JAVIER ANGULO MARTÍNEZ</option>
+            <option value="__otro__">✏️ Otro — escribir nombre…</option>
+          </select>
+          <input type="text" id="reporta-otro-rotura" name="ReportaOtro" placeholder="Escribe el nombre completo" style="display:none;margin-top:8px;" autocorrect="off" autocapitalize="characters">
+        </div>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-rotura"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit rotura" onclick="submitForm(event,'rotura')">
+        📤 Guardar Registro
+      </button>
+      <button class="btn-clear" onclick="clearForm('rotura')">Limpiar</button>
+      <span class="send-status" id="status-rotura"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('rotura')">▸ Ver registros guardados</span>
+      <div class="records-table-wrap" id="records-rotura">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Entrega</th><th>Fecha</th><th>Referencias</th>
+              <th>Proceso</th><th>Reporta</th>
+            </tr>
+          </thead>
+          <tbody id="records-body-rotura"></tbody>
+        </table>
+        <p class="fotos-folder-txt" style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión. Los datos se guardan en Google Sheets · Fotos en Google Drive (carpeta DECORBAQ_Fotos).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       FORMULARIO 2: LOG INVERSA
+  ═════════════════════════════════════════ -->
+  <div class="form-card" id="card-loginversa">
+
+    <div class="form-header loginversa">
+      <div class="form-title">Registro de Logística Inversa</div>
+      <div class="form-subtitle">Control de devoluciones y retornos de mercancía</div>
+    </div>
+
+    <form class="form-body" id="form-loginversa" onsubmit="submitForm(event,'loginversa')">
+      <div class="grid-2">
+        <div class="field">
+          <label>No. Entrega <span class="req">*</span></label>
+          <input type="text" name="Entrega" placeholder="Ej. ENT-20240115" required>
+        </div>
+        <div class="field">
+          <label>Fecha <span class="req">*</span></label>
+          <input type="date" name="Fecha" required>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Motivo de Retorno <span class="req">*</span></label>
+          <select name="MotivoRetorno" required>
+            <option value="">Seleccionar motivo…</option>
+            <option>ERROR DE DESPACHO</option>
+            <option>DAÑADO</option>
+            <option>NO PIDIO</option>
+            <option>REPETIDO</option>
+            <option>NO ES LA REFERENCIA SOLICITADA</option>
+            <option>NO SE ENCONTRO DIRECCION</option>
+            <option>CLIENTE PIDE REPROGRAMAR</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo de Devolución <span class="req">*</span></label>
+          <select name="TipoDevolucion" required>
+            <option value="">Seleccionar tipo…</option>
+            <option>PARCIAL</option>
+            <option>TOTAL</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-3">
+        <div class="field">
+          <label>Estado</label>
+          <select name="Estado">
+            <option value="">Seleccionar…</option>
+            <option>BUENO</option>
+            <option>NO BUEN ESTADO</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Referencia <span class="req">*</span></label>
+          <input type="text" name="Referencia" placeholder="Código de referencia" required>
+        </div>
+        <div class="field">
+          <label>Cantidad <span class="req">*</span></label>
+          <input type="number" name="Cantidad" min="1" placeholder="0" required>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field col-span-2">
+          <label>Observación</label>
+          <textarea name="Observacion" placeholder="Detalles adicionales sobre la devolución…"></textarea>
+        </div>
+        <div class="field col-span-2">
+          <label>Reporta <span class="req">*</span></label>
+          <select name="Reporta" id="reporta-select-loginversa" onchange="toggleOtroReporta('loginversa')">
+            <option value="">Seleccionar responsable…</option>
+            <option>CARVAJAL TRUJILLO ALVARO JAVIER</option>
+            <option>CABARCAS VELASQUEZ WILMER GUILLERMO</option>
+            <option>RANFER DE JESUS TAPIA VILLEGAS</option>
+            <option>HEREIRA MARTINEZ ROSULO MANUEL</option>
+            <option>JEISON JAVIER ANGULO MARTÍNEZ</option>
+            <option value="__otro__">✏️ Otro — escribir nombre…</option>
+          </select>
+          <input type="text" id="reporta-otro-loginversa" name="ReportaOtro" placeholder="Escribe el nombre completo" style="display:none;margin-top:8px;" autocorrect="off" autocapitalize="characters">
+        </div>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-loginversa"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit loginversa" onclick="submitForm(event,'loginversa')">
+        📤 Guardar Registro
+      </button>
+      <button class="btn-clear" onclick="clearForm('loginversa')">Limpiar</button>
+      <span class="send-status" id="status-loginversa"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('loginversa')">▸ Ver registros guardados</span>
+      <div class="records-table-wrap" id="records-loginversa">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Entrega</th><th>Fecha</th><th>Motivo</th>
+              <th>Tipo Dev.</th><th>Estado</th><th>Referencia</th><th>Cantidad</th><th>Reporta</th>
+            </tr>
+          </thead>
+          <tbody id="records-body-loginversa"></tbody>
+        </table>
+        <p class="fotos-folder-txt" style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión. Los datos se guardan en Google Sheets · Fotos en Google Drive (carpeta DECORBAQ_Fotos).
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- ════════════════════════════════════════
+       FORMULARIO 3: SOBRANTES O FALTANTES
+  ═════════════════════════════════════════ -->
+  <div class="form-card" id="card-sobrates">
+    <div class="form-header sobrates">
+      <div class="form-title">⚖️ Sobrantes o Faltantes</div>
+      <div class="form-subtitle">Reporte de diferencias en cantidades recibidas en entrega</div>
+    </div>
+
+    <form class="form-body" id="form-sobrates" onsubmit="submitForm(event,'sobrates')">
+      <div class="grid-2">
+        <div class="field">
+          <label>DT# <span class="req">*</span></label>
+          <input type="text" name="DT" placeholder="123456789012" maxlength="12" inputmode="numeric" pattern="\d{12}" title="Debe tener exactamente 12 dígitos" required autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Entrega <span class="req">*</span></label>
+          <input type="text" name="Entrega" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="\d{10}" title="Debe tener exactamente 10 dígitos" required autocomplete="off">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Cantidad <span class="req">*</span></label>
+          <input type="number" name="Cantidad" placeholder="0" min="1" required>
+        </div>
+        <div class="field">
+          <label>Referencia <span class="req">*</span></label>
+          <input type="text" name="Referencia" placeholder="Código alfanumérico" required autocomplete="off" autocapitalize="characters">
+        </div>
+        <div class="field col-span-2">
+          <label>Tipo de Novedad <span class="req">*</span></label>
+          <select name="TipoNovedad" required>
+            <option value="">Seleccionar…</option>
+            <option value="SOBRANTE">Sobrante</option>
+            <option value="FALTANTE">Faltante</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea name="Observacion" placeholder="Detalles adicionales sobre el sobrante o faltante…"></textarea>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-sobrates"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit sobrates" onclick="submitForm(event,'sobrates')">📤 Guardar Registro</button>
+      <button class="btn-clear" onclick="clearFormSimple('sobrates')">Limpiar</button>
+      <span class="send-status" id="status-sobrates"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('sobrates')">▸ Ver registros guardados (0)</span>
+      <div class="records-table-wrap" id="records-sobrates">
+        <table class="records-table">
+          <thead>
+            <tr><th>#</th><th>DT#</th><th>Entrega</th><th>Cantidad</th><th>Referencia</th><th>Tipo</th></tr>
+          </thead>
+          <tbody id="records-body-sobrates"></tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión · Se guardan en hoja SOBRANTES_FALTANTES de Google Sheets.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       FORMULARIO 4: TRUEQUE
+  ═════════════════════════════════════════ -->
+  <div class="form-card" id="card-trueque">
+    <div class="form-header trueque">
+      <div class="form-title">🔄 Trocado</div>
+      <div class="form-subtitle">Producto recibido equivocado — señala lo que llegó vs. lo que debía llegar</div>
+    </div>
+
+    <form class="form-body" id="form-trueque" onsubmit="submitForm(event,'trueque')">
+      <div class="grid-2">
+        <div class="field">
+          <label>DT# <span class="req">*</span></label>
+          <input type="text" name="DT" placeholder="123456789012" maxlength="12" inputmode="numeric" pattern="\d{1,12}" title="Máximo 12 dígitos" required autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Entrega <span class="req">*</span></label>
+          <input type="text" name="Entrega" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="\d{1,10}" title="Máximo 10 dígitos" required autocomplete="off">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Recibo Ref <span class="req">*</span></label>
+          <input type="text" name="ReciboRef" placeholder="Ref. que llegó" required autocomplete="off" autocapitalize="characters">
+        </div>
+        <div class="field">
+          <label>En Vez De <span class="req">*</span></label>
+          <input type="text" name="EnVezDe" placeholder="Ref. que debía llegar" required autocomplete="off" autocapitalize="characters">
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea name="Observacion" placeholder="Detalles adicionales sobre el trocado…"></textarea>
+      </div>
+    </form>
+
+    <div style="padding: 0 36px;">
+      <div class="geo-status" id="geo-status-trueque"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-submit trueque" onclick="submitForm(event,'trueque')">📤 Guardar Registro</button>
+      <button class="btn-clear" onclick="clearFormSimple('trueque')">Limpiar</button>
+      <span class="send-status" id="status-trueque"></span>
+    </div>
+
+    <div class="records-section">
+      <span class="records-toggle" onclick="toggleRecords('trueque')">▸ Ver registros guardados (0)</span>
+      <div class="records-table-wrap" id="records-trueque">
+        <table class="records-table">
+          <thead>
+            <tr><th>#</th><th>DT#</th><th>Entrega</th><th>Recibo Ref</th><th>En Vez De</th></tr>
+          </thead>
+          <tbody id="records-body-trueque"></tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text3);margin-top:8px;padding-bottom:8px;">
+          Registros en esta sesión · Se guardan en hoja TROCADO de Google Sheets.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div id="setup-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;"></div>
+<div id="setup-panel" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:201;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">⚙️ Configurar Google Sheets</div>
+  </div>
+
+  <div style="background:#F8F6F3;border-radius:10px;padding:16px;margin-bottom:14px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--accent);font-size:16px;margin-bottom:6px;">PASO 1</div>
+    <p style="font-size:13px;color:#1A1714;line-height:1.5;">Abre <strong>sheets.google.com</strong> y crea una hoja con dos pestañas: <strong>ROTURA</strong> y <strong>LOGINVERSA</strong>.</p>
+  </div>
+
+  <div style="background:#F8F6F3;border-radius:10px;padding:16px;margin-bottom:14px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--accent);font-size:16px;margin-bottom:6px;">PASO 2</div>
+    <p style="font-size:13px;color:#1A1714;line-height:1.5;">Ve a <strong>Extensiones → Apps Script</strong> y pega el código que aparece en la versión de escritorio.</p>
+  </div>
+
+  <div style="background:#F8F6F3;border-radius:10px;padding:16px;margin-bottom:14px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--accent);font-size:16px;margin-bottom:6px;">PASO 3 — Pega tu URL aquí</div>
+    <p style="font-size:13px;color:#1A1714;margin-bottom:10px;">Después de desplegar la App web, copia la URL y pégala abajo:</p>
+    <input
+      id="script-url-input"
+      type="text"
+      inputmode="url"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="none"
+      spellcheck="false"
+      placeholder="https://script.google.com/macros/s/…/exec"
+      style="width:100%;font-family:'Inter',sans-serif;font-size:14px;color:#1A1714;background:#fff;border:2px solid #DDD9D3;border-radius:8px;padding:12px 14px;outline:none;-webkit-appearance:none;box-sizing:border-box;"
+    >
+    <p style="font-size:11px;color:#9E9892;margin-top:6px;">💡 Mantén presionado el campo → Pegar</p>
+  </div>
+
+  <button id="btn-save-config" style="width:100%;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent;">Guardar y conectar</button>
+  <button id="btn-close-config" style="width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:14px;background:none;border:1.5px solid #DDD9D3;border-radius:10px;cursor:pointer;color:#6B6560;-webkit-tap-highlight-color:transparent;">Cancelar</button>
+</div>
+
+<!-- ─── TOAST ─────────────────────────────── -->
+<div id="toast"></div>
+
+<script>
+  // ─── Config por sucursal ───────────────────
+  // Este mismo index.html se usa en /decorbaq/, /decormed/, /decorfun/,
+  // /decoryum/ y /decorbue/. Detecta la carpeta actual por la URL y
+  // aplica automáticamente color, nombre y URL de Apps Script guardada.
+  const BRANCHES = {
+    decorbaq: { suffix: 'BAQ', name: 'DECORBAQ', accent: '#C0392B', accent2: '#E74C3C', accentDark: '#A93226', accentRgb: '192,57,43', scriptUrl: 'https://script.google.com/macros/s/AKfycby5lmRATomTSCN-WSirVGNLY__neTI6nUL01Kg3B7PF8U-Ig0wE94P1maRzZo2PNu4m/exec' },
+    decormed: { suffix: 'MED', name: 'DECORMED', accent: '#2E86DE', accent2: '#5DADE2', accentDark: '#2876C3', accentRgb: '46,134,222', scriptUrl: '' },
+    decorfun: { suffix: 'FUN', name: 'DECORFUN', accent: '#27AE60', accent2: '#58D68D', accentDark: '#229954', accentRgb: '39,174,96', scriptUrl: '' },
+    decoryum: { suffix: 'YUM', name: 'DECORYUM', accent: '#E67E22', accent2: '#F0A742', accentDark: '#CA6F1E', accentRgb: '230,126,34', scriptUrl: '' },
+    decorbue: { suffix: 'BUE', name: 'DECORBUE', accent: '#16A085', accent2: '#48C9B0', accentDark: '#138D75', accentRgb: '22,160,133', scriptUrl: '' },
+  };
+
+  function detectBranch() {
+    const path = window.location.pathname.toLowerCase();
+    const found = Object.keys(BRANCHES).find(key => path.includes('/' + key));
+    return found || 'decorbaq'; // fallback si se abre suelto (ej. en local)
+  }
+
+  const branchKey = detectBranch();
+  const branch = BRANCHES[branchKey];
+  const storageKey = branchKey + '_script_url';
+
+  function applyBranding() {
+    const root = document.documentElement.style;
+    root.setProperty('--accent', branch.accent);
+    root.setProperty('--accent2', branch.accent2);
+    root.setProperty('--accent-dark', branch.accentDark);
+    root.setProperty('--accent-rgb', branch.accentRgb);
+    root.setProperty('--tab1', branch.accent);
+
+    document.title = branch.name + ' – Novedades Operativas';
+    const appleTitle = document.getElementById('apple-title-meta');
+    if (appleTitle) appleTitle.setAttribute('content', branch.name);
+    const logoSuffix = document.getElementById('logo-suffix');
+    if (logoSuffix) logoSuffix.textContent = branch.suffix;
+    document.querySelectorAll('.fotos-folder-txt').forEach(el => {
+      el.textContent = 'Registros en esta sesión. Los datos se guardan en Google Sheets · Fotos en Google Drive (carpeta ' + branch.name + '_Fotos).';
+    });
+  }
+  applyBranding();
+
+  // ─── State ────────────────────────────────
+  let scriptUrl = branch.scriptUrl;
+  try { const saved = localStorage.getItem(storageKey); if (saved) scriptUrl = saved; } catch(e) {}
+  let records = { rotura: [], loginversa: [], sobrates: [], trueque: [] };
+  let refRowCount = 0;
+
+  // ─── Init ─────────────────────────────────
+  window.onload = () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
+    if (scriptUrl) document.getElementById('config-banner').style.display = 'none';
+    addRefRow(); // Start with one row
+  };
+
+  // ─── Multi-reference rows ──────────────────
+  function addRefRow() {
+    refRowCount++;
+    const tbody = document.getElementById('ref-tbody');
+    const id = refRowCount;
+    const tr = document.createElement('tr');
+    tr.id = `ref-row-${id}`;
+    tr.innerHTML = `
+      <td class="td-num">${id}</td>
+      <td class="td-cat">
+        <select name="ref_cat_${id}" required>
+          <option value="">Categoría…</option>
+          <option>Laminado</option>
+          <option>Piedra Natural</option>
+          <option>Baldosa Ceramica</option>
+          <option>Sanitarios</option>
+          <option>Adhesivos</option>
+        </select>
+      </td>
+      <td class="td-ref">
+        <input type="text" name="ref_cod_${id}" placeholder="Código / Referencia" required>
+      </td>
+      <td class="td-cant">
+        <input type="number" name="ref_qty_${id}" min="1" placeholder="0" required oninput="updateSummary()">
+      </td>
+      <td class="td-emp">
+        <select name="ref_emp_${id}">
+          <option value="">Empaque…</option>
+          <option>Caja</option>
+          <option>Unidad</option>
+          <option>Pieza</option>
+          <option>MT2</option>
+        </select>
+      </td>
+      <td class="td-del">
+        <button type="button" class="btn-del-row" onclick="delRefRow(${id})" title="Eliminar fila">×</button>
+      </td>`;
+    tbody.appendChild(tr);
+    updateRefLabel();
+    updateSummary();
+    tr.querySelector('select[name^="ref_cat"]').focus();
+  }
+
+  function delRefRow(id) {
+    const row = document.getElementById(`ref-row-${id}`);
+    if (document.getElementById('ref-tbody').children.length <= 1) {
+      showToast('Debe haber al menos una referencia', 'err'); return;
+    }
+    row.remove();
+    renumberRows();
+    updateRefLabel();
+    updateSummary();
+  }
+
+  function renumberRows() {
+    [...document.getElementById('ref-tbody').children].forEach((tr, i) => {
+      tr.querySelector('.td-num').textContent = i + 1;
+    });
+  }
+
+  function updateRefLabel() {
+    const n = document.getElementById('ref-tbody').children.length;
+    document.getElementById('ref-count-label').textContent = `${n} ítem${n !== 1 ? 's' : ''}`;
+  }
+
+  function updateSummary() {
+    const rows = [...document.getElementById('ref-tbody').children];
+    let total = 0;
+    rows.forEach(tr => {
+      const qty = parseInt(tr.querySelector('input[type="number"]')?.value) || 0;
+      total += qty;
+    });
+    const summary = document.getElementById('ref-summary');
+    if (rows.length > 1 || total > 0) {
+      summary.textContent = `Total: ${rows.length} referencia(s) · ${total} unidad(es)`;
+      summary.classList.add('visible');
+    } else {
+      summary.classList.remove('visible');
+    }
+  }
+
+  function getRefItems() {
+    const rows = [...document.getElementById('ref-tbody').children];
+    return rows.map((tr, i) => {
+      const n = i + 1;
+      return {
+        categoria: tr.querySelector(`select[name="ref_cat_${tr.id.split('-')[2]}"]`)?.value || '',
+        referencia: tr.querySelector(`input[type="text"]`)?.value || '',
+        cantidad: tr.querySelector(`input[type="number"]`)?.value || '',
+        empaque: tr.querySelector(`select[name^="ref_emp"]`)?.value || ''
+      };
+    });
+  }
+
+  // ─── Submenu Otras Novedades ──────────────
+  function toggleOtrasMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('otras-submenu');
+    const arrow = document.getElementById('otras-arrow');
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const isOpen = menu.classList.toggle('open');
+    if (isOpen) {
+      const menuWidth = 280;
+      let left = rect.left + rect.width / 2 - menuWidth / 2;
+      if (left < 8) left = 8;
+      if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
+      menu.style.top = (rect.bottom + 6) + 'px';
+      menu.style.left = left + 'px';
+      menu.style.width = menuWidth + 'px';
+    }
+    if (arrow) arrow.classList.toggle('open', isOpen);
+  }
+  function closeOtrasMenu() {
+    const menu = document.getElementById('otras-submenu');
+    const arrow = document.getElementById('otras-arrow');
+    if (menu) menu.classList.remove('open');
+    if (arrow) arrow.classList.remove('open');
+  }
+  document.addEventListener('click', function() { closeOtrasMenu(); });
+
+  // ─── Tabs ─────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.form-card').forEach(c => c.classList.remove('active'));
+    const tabBtn = document.querySelector(`[data-tab="${tab}"]`);
+    if (tabBtn) tabBtn.classList.add('active');
+    document.getElementById(`card-${tab}`).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── Clear form simple (sin refs) ─────────
+  function clearFormSimple(formId) {
+    document.getElementById(`form-${formId}`).reset();
+    document.getElementById(`status-${formId}`).textContent = '';
+  }
+
+  // ─── Photo preview ─────────────────────────
+  // FIX: usa URL.createObjectURL en lugar de readAsDataURL.
+  // Antes se cargaba cada foto COMPLETA en memoria (5-15 MB c/u en base64)
+  // solo para mostrar una miniatura, lo que agotaba la RAM en celulares
+  // de gama media/baja y hacía que la app dejara de previsualizar y guardar.
+  let previewObjectUrls = [];
+  function liberarPreviews() {
+    previewObjectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+    previewObjectUrls = [];
+  }
+  function previewPhotos(input, previewId) {
+    const preview = document.getElementById(previewId);
+    liberarPreviews();
+    preview.innerHTML = '';
+    const files = [...(input.files || [])];
+    files.forEach(file => {
+      const url = URL.createObjectURL(file); // referencia liviana, no copia el archivo a memoria
+      previewObjectUrls.push(url);
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'photo-thumb';
+      img.loading = 'lazy';
+      preview.appendChild(img);
+    });
+    if (files.length > 0) {
+      const info = document.createElement('div');
+      info.style.cssText = 'width:100%;font-size:11px;color:var(--text2);margin-top:4px;';
+      info.textContent = `🖼️ ${files.length} foto(s) seleccionada(s)`;
+      preview.appendChild(info);
+    }
+  }
+
+  // ─── Reporta otro ────────────────────────
+  function toggleOtroReporta(formId) {
+    var sel = document.getElementById('reporta-select-' + formId);
+    var inp = document.getElementById('reporta-otro-' + formId);
+    if (sel.value === '__otro__') {
+      inp.style.display = 'block';
+      inp.required = true;
+      inp.focus();
+    } else {
+      inp.style.display = 'none';
+      inp.required = false;
+      inp.value = '';
+    }
+  }
+
+  // ─── Submit ────────────────────────────────
+  async function submitForm(e, formId) {
+    e && e.preventDefault();
+    const form = document.getElementById(`form-${formId}`);
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const fd = new FormData(form);
+    const data = {};
+    fd.forEach((v, k) => { if (k !== 'FotoFile' && k !== 'ReportaOtro') data[k] = v; });
+    // Resolve manual name if "Otro" was selected
+    const selReporta = form.querySelector('select[name="Reporta"]');
+    if (selReporta && selReporta.value === '__otro__') {
+      const otroInp = form.querySelector('input[name="ReportaOtro"]');
+      const nombre = otroInp ? otroInp.value.trim() : '';
+      if (!nombre) { showToast('Escribe el nombre del responsable', 'err'); return; }
+      data.Reporta = nombre.toUpperCase();
+    }
+
+    // For rotura, collect multi-ref items
+    if (formId === 'rotura') {
+      data._refs = getRefItems();
+      if (!data._refs.length || !data._refs[0].referencia) {
+        showToast('Agrega al menos una referencia', 'err'); return;
+      }
+    }
+
+    // ─── Leer y comprimir todas las fotos ───────────────────
+    // FIX (fallas en Android gama media/baja):
+    //  1. createImageBitmap: decodifica la imagen SIN cargar el archivo
+    //     completo como base64 en memoria (antes: readAsDataURL de la
+    //     foto original = 10-20 MB de RAM por foto).
+    //  2. onerror + timeout: antes, si una foto fallaba al decodificar,
+    //     la promesa NUNCA se resolvía y la app se quedaba congelada
+    //     sin mensaje ("no da guardar"). Ahora falla con aviso claro.
+    //  3. Procesamiento secuencial con liberación de memoria (bitmap.close,
+    //     revokeObjectURL, canvas a 1x1) entre foto y foto.
+    const fotoInput = form.querySelector('input[type="file"]');
+    const fotos = []; // array de {base64, mime, nombre}
+    const btnEnviar = form.parentElement.querySelector('.btn-submit') || form.querySelector('.btn-submit');
+    const statusFotos = document.getElementById(`status-${formId}`);
+    if (btnEnviar) btnEnviar.disabled = true;
+
+    try {
+      if (fotoInput && fotoInput.files && fotoInput.files.length > 0) {
+
+        const dibujarYComprimir = (fuente, ancho, alto) => {
+          const MAX = 800;
+          let w = ancho, h = alto;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(fuente, 0, 0, w, h);
+          const b64 = canvas.toDataURL('image/jpeg', 0.7);
+          canvas.width = 1; canvas.height = 1; // liberar memoria del canvas
+          return b64;
+        };
+
+        const compressFile = async (file) => {
+          // Ruta 1: createImageBitmap (eficiente en memoria, Android/Chrome moderno)
+          if ('createImageBitmap' in window) {
+            try {
+              let bmp;
+              try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+              catch(e1) { bmp = await createImageBitmap(file); } // navegadores sin soporte de opciones
+              const b64 = dibujarYComprimir(bmp, bmp.width, bmp.height);
+              if (bmp.close) bmp.close(); // liberar memoria del bitmap
+              return { base64: b64, mime: 'image/jpeg', nombre: file.name };
+            } catch(e) { /* cae a la ruta 2 */ }
+          }
+          // Ruta 2: Image + objectURL, con manejo de error y timeout
+          return await new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            const timer = setTimeout(() => {
+              img.src = '';
+              URL.revokeObjectURL(url);
+              reject(new Error('Tiempo agotado al procesar la foto'));
+            }, 20000);
+            img.onload = () => {
+              clearTimeout(timer);
+              try {
+                const b64 = dibujarYComprimir(img, img.naturalWidth, img.naturalHeight);
+                resolve({ base64: b64, mime: 'image/jpeg', nombre: file.name });
+              } catch(e) {
+                reject(e);
+              } finally {
+                img.src = '';
+                URL.revokeObjectURL(url);
+              }
+            };
+            img.onerror = () => {
+              clearTimeout(timer);
+              URL.revokeObjectURL(url);
+              reject(new Error('No se pudo leer la foto'));
+            };
+            img.src = url;
+          });
+        };
+
+        // Nombrar cada foto con el No. de Entrega
+        const noEntrega = (formId === 'rotura' ? data.NoEntrega : data.Entrega) || 'SIN-ENTREGA';
+        const archivos = Array.from(fotoInput.files);
+        let fotoIdx = 1;
+        let fotosFallidas = 0;
+        for (let i = 0; i < archivos.length; i++) {
+          if (statusFotos) {
+            statusFotos.className = 'send-status status-sending';
+            statusFotos.textContent = `📷 Procesando foto ${i + 1} de ${archivos.length}…`;
+          }
+          try {
+            const f = await compressFile(archivos[i]);
+            f.nombre = `${noEntrega}_${String(fotoIdx).padStart(2,'0')}.jpg`;
+            fotoIdx++;
+            fotos.push(f);
+          } catch(errFoto) {
+            fotosFallidas++;
+            console.warn('Foto no procesada:', archivos[i].name, errFoto);
+          }
+        }
+        if (fotosFallidas > 0) {
+          showToast(`⚠️ ${fotosFallidas} foto(s) no se pudieron procesar (memoria o formato). El registro se guardará con ${fotos.length} foto(s).`, 'err');
+        }
+        if (statusFotos) statusFotos.textContent = '';
+      }
+    } catch(errGeneral) {
+      if (btnEnviar) btnEnviar.disabled = false;
+      if (statusFotos) { statusFotos.className = 'send-status status-err'; statusFotos.textContent = '❌ Error al procesar las fotos'; }
+      showToast('⚠️ Error al procesar las fotos. Intenta con menos fotos o vuelve a tomarlas.', 'err');
+      return;
+    }
+
+    // Capturar ubicación ANTES de guardar y enviar
+    data._lat = ''; data._lng = ''; data._mapsUrl = '';
+    if (navigator.geolocation) {
+      showGeoStatus('⏳ Obteniendo ubicación…', 'geo-pending', formId);
+      try {
+        const pos = await new Promise((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 30000
+          })
+        );
+        data._lat = pos.coords.latitude.toFixed(6);
+        data._lng = pos.coords.longitude.toFixed(6);
+        data._mapsUrl = `https://www.google.com/maps?q=${data._lat},${data._lng}`;
+        showGeoStatus('📍 Ubicación capturada', 'geo-ok', formId);
+      } catch(geoErr) {
+        let msg = '';
+        if (geoErr.code === 1) {
+          msg = '📵 Permiso de ubicación denegado. Para activarlo: ve a Ajustes del navegador → Permisos del sitio → Ubicación → Permitir.';
+        } else if (geoErr.code === 2) {
+          msg = '📡 No se pudo detectar la ubicación. Verifica que el GPS esté activo.';
+        } else {
+          msg = '⏱️ Tiempo de espera agotado. El registro se guardará sin coordenadas.';
+        }
+        showGeoStatus(msg, 'geo-err', formId);
+        showToast('⚠️ ' + (geoErr.code === 1 ? 'Activa el permiso de ubicación en tu navegador.' : 'Sin ubicación — registro guardado de todas formas.'), 'err');
+      }
+    } else {
+      showGeoStatus('❌ Este navegador no soporta geolocalización.', 'geo-err', formId);
+    }
+
+    records[formId].push({ ...data, _ts: new Date().toLocaleString('es-CO') });
+    renderRecords(formId);
+
+    if (scriptUrl) {
+      const statusEl = document.getElementById(`status-${formId}`);
+      statusEl.className = 'send-status status-sending';
+      statusEl.textContent = '⏳ Guardando…';
+
+      try {
+        // Enviar fotos + datos en POST(s)
+        const payloads = buildPayload(formId, data, '');
+        for (const payload of payloads) {
+          // Adjuntar array de fotos
+          if (fotos.length > 0) {
+            payload.fotos = fotos.map(f => ({
+              base64: f.base64.split(',')[1],
+              mime: f.mime,
+              nombre: f.nombre
+            }));
+            // Compat: también primer foto en campos legacy
+            payload.fotoBase64 = payload.fotos[0].base64;
+            payload.fotoMime   = payload.fotos[0].mime;
+            payload.fotoNombre = payload.fotos[0].nombre;
+          }
+          await fetch(scriptUrl, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        statusEl.className = 'send-status status-ok';
+        const geoMsg = data._lat ? ' · 📍 Ubicación registrada' : ' · 📍 Sin ubicación';
+        const fotoMsg = fotos.length > 0 ? ` · 🖼️ ${fotos.length} foto(s) en Drive` : '';
+        statusEl.textContent = `✅ ${payloads.length} fila(s) guardadas${fotoMsg}${geoMsg}`;
+        showToast(`${payloads.length} registro(s) guardados ✓${fotoMsg}${geoMsg}`, 'ok');
+      } catch (err) {
+        statusEl.className = 'send-status status-err';
+        statusEl.textContent = '❌ Error de conexión';
+        showToast('Error al guardar. Verifica la URL del script.', 'err');
+      }
+    } else {
+      showToast('Registros guardados localmente. Configura Google Sheets para sincronizar.', 'ok');
+    }
+
+    clearForm(formId);
+    if (btnEnviar) btnEnviar.disabled = false; // reactivar botón al terminar
+  }
+
+  function buildPayload(formId, data, fotoUrl) {
+    const ts = new Date().toISOString();
+    const foto = '__FOTO__';
+    if (formId === 'rotura') {
+      const headers = ['No de Entrega','Fecha','Proceso','Categoria','Referencia','Cantidad','Empaque','Observacion','Reporta','Timestamp','Foto (Drive)','Latitud','Longitud','Ubicacion (Maps)'];
+      return data._refs.map(ref => ({
+        form: 'ROTURA',
+        headers,
+        row: [data.NoEntrega, data.Fecha, data.Proceso,
+              ref.categoria, ref.referencia, ref.cantidad, ref.empaque,
+              data.Observacion, data.Reporta, ts, foto,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }));
+    } else if (formId === 'sobrates') {
+      return [{
+        form: 'SOBRANTES_FALTANTES',
+        headers: ['DT#','Entrega','Cantidad','Referencia','Tipo','Observacion','Timestamp','Latitud','Longitud','Ubicacion (Maps)'],
+        row: [data.DT, data.Entrega, data.Cantidad, data.Referencia, data.TipoNovedad, data.Observacion||'', ts,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }];
+    } else if (formId === 'trueque') {
+      return [{
+        form: 'TRUEQUE',
+        headers: ['DT#','Entrega','Recibo Ref','En Vez De','Observacion','Timestamp','Latitud','Longitud','Ubicacion (Maps)'],
+        row: [data.DT, data.Entrega, data.ReciboRef, data.EnVezDe, data.Observacion||'', ts,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }];
+    } else {
+      return [{
+        form: 'LOGINVERSA',
+        headers: ['Entrega','Fecha','Motivo Retorno','Tipo de Devolucion','Estado','Referencia','Cantidad','Observacion','Reporta','Timestamp','Foto (Drive)','Latitud','Longitud','Ubicacion (Maps)'],
+        row: [data.Entrega, data.Fecha, data.MotivoRetorno, data.TipoDevolucion,
+              data.Estado, data.Referencia, data.Cantidad, data.Observacion,
+              data.Reporta, ts, foto,
+              data._lat || '', data._lng || '', data._mapsUrl || '']
+      }];
+    }
+  }
+
+  // ─── Clear form ────────────────────────────
+  function clearForm(formId) {
+    const form = document.getElementById(`form-${formId}`);
+    form.reset();
+    const today = new Date().toISOString().split('T')[0];
+    form.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
+    liberarPreviews(); // liberar memoria de las miniaturas
+    const pr = document.getElementById('preview-rotura');
+    if (pr) pr.innerHTML = '';
+    document.getElementById(`status-${formId}`).textContent = '';
+
+    if (formId === 'rotura') {
+      document.getElementById('ref-tbody').innerHTML = '';
+      refRowCount = 0;
+      addRefRow();
+      document.getElementById('ref-summary').classList.remove('visible');
+    }
+  }
+
+  function renderRecords(formId) {
+    const tbody = document.getElementById(`records-body-${formId}`);
+    tbody.innerHTML = '';
+    records[formId].slice().reverse().forEach((r, i) => {
+      const tr = document.createElement('tr');
+      if (formId === 'rotura') {
+        const refSummary = r._refs
+          ? r._refs.map(x => `${x.referencia}(${x.cantidad})`).join(', ')
+          : `${r.Referencia||''}(${r.Cantidad||''})`;
+        tr.innerHTML = `<td>${records.rotura.length - i}</td><td>${r.NoEntrega||''}</td>
+          <td>${r.Fecha||''}</td><td style="max-width:180px;font-size:11px">${refSummary}</td>
+          <td>${r.Proceso||''}</td><td style="font-size:11px">${(r.Reporta||'').split(' ')[0]}</td>`;
+      } else if (formId === 'sobrates') {
+        tr.innerHTML = `<td>${records.sobrates.length - i}</td><td>${r.DT||''}</td>
+          <td>${r.Entrega||''}</td><td>${r.Cantidad||''}</td><td>${r.Referencia||''}</td><td>${r.TipoNovedad||''}</td>`;
+      } else if (formId === 'trueque') {
+        tr.innerHTML = `<td>${records.trueque.length - i}</td><td>${r.DT||''}</td>
+          <td>${r.Entrega||''}</td><td>${r.ReciboRef||''}</td><td>${r.EnVezDe||''}</td>`;
+      } else {
+        tr.innerHTML = `<td>${records.loginversa.length - i}</td><td>${r.Entrega||''}</td><td>${r.Fecha||''}</td>
+          <td>${r.MotivoRetorno||''}</td><td>${r.TipoDevolucion||''}</td><td>${r.Estado||''}</td>
+          <td>${r.Referencia||''}</td><td>${r.Cantidad||''}</td>
+          <td style="font-size:11px">${(r.Reporta||'').split(' ')[0]}</td>`;
+      }
+      tbody.appendChild(tr);
+    });
+  }
+
+  function toggleRecords(formId) {
+    const wrap = document.getElementById(`records-${formId}`);
+    const toggle = wrap.previousElementSibling;
+    const open = wrap.classList.toggle('open');
+    toggle.textContent = (open ? '▾' : '▸') + ` Ver registros guardados (${records[formId].length})`;
+  }
+
+  // ─── Config panel ─────────────────────────
+  function openSetup() {
+    var panel = document.getElementById('setup-panel');
+    var backdrop = document.getElementById('setup-backdrop');
+    var input = document.getElementById('script-url-input');
+    if (input && scriptUrl) input.value = scriptUrl;
+    panel.style.display = 'block';
+    backdrop.style.display = 'block';
+  }
+  function closeSetup() {
+    document.getElementById('setup-panel').style.display = 'none';
+    document.getElementById('setup-backdrop').style.display = 'none';
+  }
+  function saveConfig() {
+    var input = document.getElementById('script-url-input');
+    var url = input ? input.value.trim() : '';
+    if (!url.startsWith('https://script.google.com')) {
+      showToast('URL inválida. Debe ser de script.google.com', 'err'); return;
+    }
+    scriptUrl = url;
+    try { localStorage.setItem(storageKey, url); } catch(e) {}
+    var banner = document.getElementById('config-banner');
+    if (banner) banner.style.display = 'none';
+    closeSetup();
+    showToast('✅ Google Sheets + Drive conectados correctamente', 'ok');
+  }
+
+  // ─── Geo status panel ─────────────────────
+  function showGeoStatus(msg, cls, formId) {
+    let el = document.getElementById(`geo-status-${formId}`);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `geo-status ${cls}`;
+    el.style.display = 'block';
+    if (cls === 'geo-ok') setTimeout(() => { el.style.display = 'none'; }, 5000);
+  }
+
+  // ─── Toast ────────────────────────────────
+  function showToast(msg, type='ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    setTimeout(() => t.className = type, 3000);
+  }
+
+  // Wire up panel buttons
+  document.getElementById('btn-header-config').addEventListener('click', openSetup);
+  document.getElementById('btn-save-config').addEventListener('click', saveConfig);
+  document.getElementById('btn-close-config').addEventListener('click', closeSetup);
+  document.getElementById('setup-backdrop').addEventListener('click', closeSetup);
+  document.getElementById('config-banner').addEventListener('click', openSetup);
+
+  // ─── PWA Service Worker (con auto-actualización) ──────
+  let refrescandoPorSW = false;
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => {
+          // Revisa si hay una versión nueva cada vez que se abre/reactiva la app
+          reg.update();
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') reg.update();
+          });
+        })
+        .catch(err => console.log('SW error:', err));
+    });
+
+    // Cuando un Service Worker nuevo toma el control, recarga la página
+    // automáticamente para que el usuario SIEMPRE vea la última versión
+    // sin tener que borrar caché ni reinstalar nada.
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refrescandoPorSW) return;
+      // FIX: no recargar si el usuario tiene un formulario a medio llenar
+      // o fotos seleccionadas — la recarga automática le borraba el trabajo
+      // y parecía una "falla" de la app. La actualización se aplica en la
+      // próxima apertura.
+      const formularioEnUso =
+        [...document.querySelectorAll('input[type="file"]')].some(i => i.files && i.files.length > 0) ||
+        [...document.querySelectorAll('input[type="text"], textarea')].some(i => i.value.trim() !== '');
+      if (formularioEnUso) return;
+      refrescandoPorSW = true;
+      window.location.reload();
+    });
+  }
+</script>
+</body>
+</html>
