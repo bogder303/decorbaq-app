@@ -550,8 +550,8 @@
       <hr class="section-divider">
 
       <div class="field">
-        <label>Proceso</label>
-        <select name="Proceso">
+        <label>Proceso <span class="req">*</span></label>
+        <select name="Proceso" required>
           <option value="">Seleccionar…</option>
           <option>Descargue Mula</option>
           <option>Revision de Mula</option>
@@ -565,7 +565,7 @@
 
       <div class="grid-2">
         <div class="field col-span-2">
-          <label>📷 Foto (evidencia)</label>
+          <label>📷 Foto (evidencia) <span class="req">*</span></label>
           <div class="photo-upload" id="photo-drop-rotura">
             <input type="file" name="FotoFile" accept="image/*" multiple onchange="previewPhotos(this,'preview-rotura')">
             <div class="photo-icon">📷</div>
@@ -616,7 +616,7 @@
         </div>
         <div class="field col-span-2">
           <label>Reporta <span class="req">*</span></label>
-          <select name="Reporta" id="reporta-select-rotura" onchange="toggleOtroReporta('rotura')">
+          <select name="Reporta" required id="reporta-select-rotura" onchange="toggleOtroReporta('rotura')">
             <option value="">Seleccionar responsable…</option>
             <option>CARVAJAL TRUJILLO ALVARO JAVIER</option>
             <option>CABARCAS VELASQUEZ WILMER GUILLERMO</option>
@@ -715,8 +715,8 @@
 
       <div class="grid-3">
         <div class="field">
-          <label>Estado</label>
-          <select name="Estado">
+          <label>Estado <span class="req">*</span></label>
+          <select name="Estado" required>
             <option value="">Seleccionar…</option>
             <option>BUENO</option>
             <option>NO BUEN ESTADO</option>
@@ -741,7 +741,7 @@
         </div>
         <div class="field col-span-2">
           <label>Reporta <span class="req">*</span></label>
-          <select name="Reporta" id="reporta-select-loginversa" onchange="toggleOtroReporta('loginversa')">
+          <select name="Reporta" required id="reporta-select-loginversa" onchange="toggleOtroReporta('loginversa')">
             <option value="">Seleccionar responsable…</option>
             <option>CARVAJAL TRUJILLO ALVARO JAVIER</option>
             <option>CABARCAS VELASQUEZ WILMER GUILLERMO</option>
@@ -1011,7 +1011,7 @@
         <input type="number" name="ref_qty_${id}" min="1" placeholder="0" required oninput="updateSummary()">
       </td>
       <td class="td-emp">
-        <select name="ref_emp_${id}">
+        <select name="ref_emp_${id}" required>
           <option value="">Empaque…</option>
           <option>Caja</option>
           <option>Unidad</option>
@@ -1175,6 +1175,31 @@
     const form = document.getElementById(`form-${formId}`);
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
+    // ─── Validación extra: Averías y Logística Inversa (solo Observación es opcional) ───
+    if (formId === 'rotura' || formId === 'loginversa') {
+      const selRep = form.querySelector('select[name="Reporta"]');
+      if (!selRep || !selRep.value) { showToast('Selecciona quién reporta', 'err'); return; }
+      if (selRep.value === '__otro__') {
+        const otroNom = form.querySelector('input[name="ReportaOtro"]');
+        if (!otroNom || !otroNom.value.trim()) { showToast('Escribe el nombre del responsable', 'err'); return; }
+      }
+    }
+    if (formId === 'rotura') {
+      const fotoChk = form.querySelector('input[type="file"]');
+      if (!fotoChk || !fotoChk.files || fotoChk.files.length === 0) {
+        showToast('📷 Debes adjuntar al menos una foto de evidencia', 'err');
+        const box = document.getElementById('photo-drop-rotura');
+        if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const filasChk = getRefItems();
+      const filaIncompleta = filasChk.findIndex(r => !r.categoria || !String(r.referencia).trim() || !r.cantidad || !r.empaque);
+      if (filaIncompleta !== -1) {
+        showToast(`Completa todos los campos de la referencia #${filaIncompleta + 1}`, 'err');
+        return;
+      }
+    }
+
     const fd = new FormData(form);
     const data = {};
     fd.forEach((v, k) => { if (k !== 'FotoFile' && k !== 'ReportaOtro') data[k] = v; });
@@ -1300,6 +1325,14 @@
       if (btnEnviar) btnEnviar.disabled = false;
       if (statusFotos) { statusFotos.className = 'send-status status-err'; statusFotos.textContent = '❌ Error al procesar las fotos'; }
       showToast('⚠️ Error al procesar las fotos. Intenta con menos fotos o vuelve a tomarlas.', 'err');
+      return;
+    }
+
+    // Averías: no enviar si ninguna foto pudo procesarse
+    if (formId === 'rotura' && fotos.length === 0) {
+      if (btnEnviar) btnEnviar.disabled = false;
+      if (statusFotos) statusFotos.textContent = '';
+      showToast('⚠️ Ninguna foto se pudo procesar. Vuelve a tomarlas e intenta de nuevo.', 'err');
       return;
     }
 
