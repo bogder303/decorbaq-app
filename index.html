@@ -973,6 +973,15 @@
 
 <script>
   // ─── State ────────────────────────────────
+  // Conductores: solo pueden reportar averías en estos procesos (agregar nuevos nombres aquí, en MAYÚSCULAS)
+  const CONDUCTORES = [
+    'BREYLER GUZMAN OBESO',
+    'JUAN DAVID MOYA',
+    'JEISON JAVIER ANGULO MARTÍNEZ',
+    'HEREIRA MARTINEZ ROSULO MANUEL'
+  ];
+  const PROCESOS_CONDUCTOR = ['Transporte a Cliente', 'Descargue Cliente'];
+
   let scriptUrl = 'https://script.google.com/macros/s/AKfycby5lmRATomTSCN-WSirVGNLY__neTI6nUL01Kg3B7PF8U-Ig0wE94P1maRzZo2PNu4m/exec';
   let records = { rotura: [], loginversa: [], sobrates: [], trueque: [] };
   let refRowCount = 0;
@@ -1185,6 +1194,13 @@
       }
     }
     if (formId === 'rotura') {
+      const repSel = form.querySelector('select[name="Reporta"]');
+      const procSel = form.querySelector('select[name="Proceso"]');
+      if (repSel && procSel && CONDUCTORES.includes(repSel.value.trim().toUpperCase()) && !PROCESOS_CONDUCTOR.includes(procSel.value)) {
+        showToast('🚚 La mercancía ya fue entregada en el almacén. Solo se acepta "Descargue Cliente" o "Transporte a Cliente".', 'err', 6000);
+        procSel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
       const fotoChk = form.querySelector('input[type="file"]');
       if (!fotoChk || !fotoChk.files || fotoChk.files.length === 0) {
         showToast('📷 Debes adjuntar al menos una foto de evidencia', 'err');
@@ -1547,11 +1563,11 @@
   }
 
   // ─── Toast ────────────────────────────────
-  function showToast(msg, type='ok') {
+  function showToast(msg, type='ok', ms=3000) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.className = `show ${type}`;
-    setTimeout(() => t.className = type, 3000);
+    setTimeout(() => t.className = type, ms);
   }
 
   // Wire up panel buttons
